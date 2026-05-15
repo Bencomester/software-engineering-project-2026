@@ -1,7 +1,15 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/g5b-anKB)
-# TODO: the name of your project
+# Tic-Tac-Toe but better
 
-TODO: a detailed description of your project (must contain at least the original description of the assignment)
+A következő játékot két játékos játszhatja piros, sárga és zöld kavicsokkal egy
+3 × 3 mezőből álló játéktáblán. Felváltva lehet lépni, az alábbi lehetőségek
+valamelyikét választva:
+
+- Egy üres mezőre lehet helyezni egy piros kavicsot.
+- Egy piros kavicsot ki lehet cserélni egy sárga kavicsra.
+- Egy sárga kavicsot ki lehet cserélni egy zöld kavicsra.
+
+Az a játékos nyer, akinek a lépése után valamelyik sorban, oszlopban vagy
+átlóban 3 azonos színű kavics lesz.
 
 ## Building from Source
 
