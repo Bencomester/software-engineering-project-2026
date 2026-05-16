@@ -7,14 +7,19 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import jfxutils.images.EnumImageStorage;
 import jfxutils.images.ImageStorage;
+
+import java.io.File;
+import java.io.IOException;
 
 public class BoardGameController {
 
@@ -90,17 +95,57 @@ public class BoardGameController {
 
     @FXML
     private void onSave() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Game");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
+        File file = fileChooser.showSaveDialog(board.getScene().getWindow());
+        if (file == null) return;
+
+        try {
+            model.saveGameStateToFile(file);
+        } catch (IOException e) {
+            showError("Failed to save game", e);
+        }
     }
 
     @FXML
     private void onLoad() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Game");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
+        File file = fileChooser.showOpenDialog(board.getScene().getWindow());
+        if (file == null) return;
+
+        try {
+            model.loadGameStateFromFile(file);
+        }  catch (IOException e) {
+            showError("Failed to load game", e);
+        }
+    }
+
+    private void showError(String message, Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 
     @FXML
     private void onAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Tic-Tac-Toe but better");
+        alert.setContentText("""
+                Created By: %s
+                Java vendor: %s
+                Java version: %s
+                JavaFX version: %s
+                """.formatted(System.getProperty("user.name"), System.getProperty("java.vendor"), System.getProperty("java.version"), System.getProperty("javafx.version")));
 
+        alert.showAndWait();
     }
 
     private void createLabelBind() {
