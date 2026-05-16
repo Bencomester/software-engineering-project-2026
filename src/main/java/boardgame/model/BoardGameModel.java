@@ -213,9 +213,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         BoardGameModel stateCopy = new BoardGameModel();
         stateCopy.gameBoard = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
-            stateCopy.gameBoard[i] = this.gameBoard[i].clone();
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                stateCopy.gameBoard[i][j] = new ReadOnlyObjectWrapper<>(gameBoard[i][j].get());
+            }
         }
-        stateCopy.nextPlayer = nextPlayer;
+        stateCopy.nextPlayer = new ReadOnlyObjectWrapper<>(nextPlayer.get());
 
         return stateCopy;
     }
