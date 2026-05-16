@@ -1,10 +1,13 @@
 package boardgame.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import common.util.board.Position;
 import game.State;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -172,6 +175,37 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
             }
         }
         return legalMoves;
+    }
+
+    public void saveGameStateToFile(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        GameSave save = new GameSave(getBoardData(), getNextPlayer());
+        mapper.writerWithDefaultPrettyPrinter().writeValue(file, save);
+    }
+
+    public void loadGameStateFromFile(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        GameSave save = mapper.readValue(file, GameSave.class);
+        loadBoardData(save.board(), save.nextPlayer());
+    }
+
+    private Piece[][] getBoardData() {
+        Piece[][] boardData = new Piece[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                boardData[i][j] =  gameBoard[i][j].get();
+            }
+        }
+        return boardData;
+    }
+
+    private void loadBoardData(Piece[][] boardData, Player player) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                gameBoard[i][j].set(boardData[i][j]);
+            }
+        }
+        nextPlayer.set(player);
     }
 
     @Override
