@@ -1,4 +1,4 @@
-package boardgame;
+package boardgame.ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

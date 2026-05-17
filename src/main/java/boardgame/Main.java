@@ -1,6 +1,7 @@
 package boardgame;
 
 import boardgame.console.ConsoleGame;
+import boardgame.ui.BoardGameApplication;
 import javafx.application.Application;
 import org.tinylog.Logger;
 
