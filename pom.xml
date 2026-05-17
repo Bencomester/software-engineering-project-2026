@@ -24,6 +24,7 @@
         <jacoco.version>0.8.14</jacoco.version>
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.surefire.version>3.5.5</maven.surefire.version>
+        <tinylog.version>2.7.0</tinylog.version>
         <exec.mainClass>boardgame.Main</exec.mainClass>
     </properties>
     <dependencies>
@@ -65,6 +66,18 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.21.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>${tinylog.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>${tinylog.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
