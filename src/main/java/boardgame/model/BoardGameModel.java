@@ -5,6 +5,7 @@ import common.util.board.Position;
 import game.State;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     private ReadOnlyObjectWrapper<Piece>[][] gameBoard;
     private ReadOnlyObjectWrapper<Player> nextPlayer;
 
+    @SuppressWarnings("unchecked")
     public BoardGameModel() {
         nextPlayer = new ReadOnlyObjectWrapper<>(Player.PLAYER_1);
         gameBoard = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
@@ -26,6 +28,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
                 gameBoard[i][j] = new ReadOnlyObjectWrapper<>(Piece.NONE);
             }
         }
+        Logger.info("Created a new BoardGameModel");
     }
 
     public ReadOnlyObjectProperty<Player> getNextPlayerProperty() {
@@ -53,6 +56,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         }
 
         nextPlayer.set(Player.PLAYER_1);
+        Logger.info("Game Board reset");
     }
 
     @Override
@@ -60,6 +64,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return checkRows() || checkColumns() || checkDiagonalFromTopLeft() || checkDiagonalsFromBottomLeft();
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private boolean checkRows() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             boolean areRowPiecesSame = true;
@@ -81,6 +86,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return false;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private boolean checkColumns() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             boolean areRowPiecesSame = true;
@@ -150,10 +156,13 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     @Override
     public void makeMove(Position move) {
-        if (!isLegalMove(move)) throw new IllegalArgumentException();
+        if (!isLegalMove(move)) {
+            Logger.warn("An invalid move was made!");
+            throw new IllegalArgumentException();
+        }
 
         gameBoard[move.row()][move.col()].set(
-                switch (gameBoard[move.row()][move.col()].get()) {
+                switch (getPiece(move.row(), move.col())) {
                     case NONE -> Piece.RED;
                     case RED -> Piece.YELLOW;
                     case YELLOW -> Piece.GREEN;
@@ -162,6 +171,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         );
 
         nextPlayer.set(nextPlayer.get().opponent());
+        Logger.info(String.format("Made a move (%d, %d), which is now %s", move.row(), move.col(), getPiece(move.row(), move.col())));
     }
 
     @Override
@@ -174,6 +184,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
                 if (isLegalMove(move)) legalMoves.add(move);
             }
         }
+        Logger.info(String.format("List of all legal moves: %s",  legalMoves));
         return legalMoves;
     }
 
@@ -181,12 +192,14 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = new GameSave(getBoardData(), getNextPlayer());
         mapper.writerWithDefaultPrettyPrinter().writeValue(file, save);
+        Logger.info(String.format("Saved game state to file: %s", file.getAbsolutePath()));
     }
 
     public void loadGameStateFromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = mapper.readValue(file, GameSave.class);
         loadBoardData(save.board(), save.nextPlayer());
+        Logger.info(String.format("Loaded game state from file: %s", file.getAbsolutePath()));
     }
 
     private Piece[][] getBoardData() {
@@ -208,6 +221,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         nextPlayer.set(player);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BoardGameModel copy() {
         BoardGameModel stateCopy = new BoardGameModel();
@@ -218,7 +232,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
             }
         }
         stateCopy.nextPlayer = new ReadOnlyObjectWrapper<>(nextPlayer.get());
-
+        Logger.info("Created deep copy of BoardGameModel");
         return stateCopy;
     }
 
