@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import jfxutils.images.EnumImageStorage;
 import jfxutils.images.ImageStorage;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class BoardGameController {
         }
 
         createLabelBind();
+        Logger.info("Controller has been initialized");
     }
 
     private StackPane createPiece(Position pos) {
@@ -78,6 +80,7 @@ public class BoardGameController {
         int row = GridPane.getRowIndex(piece);
         int col = GridPane.getColumnIndex(piece);
         Position pos = new Position(row, col);
+        Logger.info(String.format("Click registered: %s", pos));
         if (model.isLegalMove(pos)) {
             model.makeMove(pos);
         }
@@ -85,6 +88,7 @@ public class BoardGameController {
 
     @FXML
     private void onQuit() {
+        Logger.info("Quitting application");
         Platform.exit();
     }
 
@@ -100,11 +104,15 @@ public class BoardGameController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
         File file = fileChooser.showSaveDialog(board.getScene().getWindow());
-        if (file == null) return;
+        if (file == null) {
+            Logger.warn("No file selected, saving canceled");
+            return;
+        }
 
         try {
             model.saveGameStateToFile(file);
         } catch (IOException e) {
+            Logger.error(String.format("Couldn't save game: %s", e.getMessage()));
             showError("Failed to save game", e);
         }
     }
@@ -116,11 +124,15 @@ public class BoardGameController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
         File file = fileChooser.showOpenDialog(board.getScene().getWindow());
-        if (file == null) return;
+        if (file == null) {
+            Logger.warn("No file selected, loading canceled");
+            return;
+        }
 
         try {
             model.loadGameStateFromFile(file);
         }  catch (IOException e) {
+            Logger.error(String.format("Couldn't load game: %s", e.getMessage()));
             showError("Failed to load game", e);
         }
     }
@@ -145,6 +157,7 @@ public class BoardGameController {
                 JavaFX version: %s
                 """.formatted(System.getProperty("user.name"), System.getProperty("java.vendor"), System.getProperty("java.version"), System.getProperty("javafx.version")));
 
+        Logger.info("About was shown");
         alert.showAndWait();
     }
 
