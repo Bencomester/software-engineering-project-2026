@@ -10,11 +10,13 @@ import org.tinylog.Logger;
 import java.io.IOException;
 import java.util.Objects;
 
-public class BoardGameApplication extends Application {
+public final class BoardGameApplication extends Application {
 
     @Override
-    public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ui.fxml")));
+    public void start(final Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(
+                Objects.requireNonNull(getClass().getResource("/ui.fxml"))
+        );
         stage.setTitle("Tic-Tac-Toe but better");
         Scene scene = new Scene(root);
         stage.setScene(scene);
