@@ -12,13 +12,37 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Representation and logic model of the board game.
+ * The model handles different states, moving logics and win conditions.
+ * The class implements the {@link State} interface
+ * taken from homework-project-utils-2026.
+ * @author Bencomester
+ */
 public class BoardGameModel implements State<Position, BoardGameModel> {
 
+    /**
+     * The size of the game board,
+     * which will be {@code BOARD_SIZE} × {@code BOARD_SIZE}.
+     */
     private static final int BOARD_SIZE = 3;
 
+    /**
+     * The board as an array of arrays,
+     * where each {@link Piece} is wrapped in a read-only wrapper.
+     */
     private ReadOnlyObjectWrapper<Piece>[][] gameBoard;
+
+    /**
+     * The {@link Player} which makes the next move
+     * wrapped in a read-only wrapper.
+     */
     private ReadOnlyObjectWrapper<Player> nextPlayer;
 
+
+    /**
+     * Constructor for a model of the board game.
+     */
     @SuppressWarnings("unchecked")
     public BoardGameModel() {
         nextPlayer = new ReadOnlyObjectWrapper<>(Player.PLAYER_1);
@@ -31,23 +55,48 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info("Created a new BoardGameModel");
     }
 
+
+    /**
+     * Returns the next {@link Player} wrapped in a read-only property.
+     * @return read-only property containing the next player
+     */
     public ReadOnlyObjectProperty<Player> getNextPlayerProperty() {
         return nextPlayer.getReadOnlyProperty();
     }
 
+    /**
+     * Returns the {@link Player} who has the next turn
+     * @return the Player who has the next turn
+     */
     @Override
     public Player getNextPlayer() {
         return nextPlayer.get();
     }
 
-    public ReadOnlyObjectProperty<Piece> getPieceProperty(int i, int j) {
-        return gameBoard[i][j].getReadOnlyProperty();
+    /**
+     * Returns the {@link Piece} property at the specified square.
+     *
+     * @param row The index of the row specified
+     * @param col The index of the column specified
+     * @return ReadOnlyProperty of a {@link Piece}
+     */
+    public ReadOnlyObjectProperty<Piece> getPieceProperty(int row, int col) {
+        return gameBoard[row][col].getReadOnlyProperty();
     }
 
-    public Piece getPiece(int i, int j) {
-        return gameBoard[i][j].get();
+    /**
+     * Returns the {@link Piece} at the specified square.
+     * @param row The index of the row specified
+     * @param col The index of the column specified
+     * @return the {@link Piece} at the specified square
+     */
+    public Piece getPiece(int row, int col) {
+        return gameBoard[row][col].get();
     }
 
+    /**
+     * Resets the board game to the starting position.
+     */
     public void resetGameBoard() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -59,11 +108,22 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info("Game Board reset");
     }
 
+    /**
+     * Checks if the game is over.
+     * The game is over when there is three of the same color
+     * in either row column or diagonal
+     * @return {@code true} if the game has ended,
+     * {@code false} if it's still ongoing
+     */
     @Override
     public boolean isGameOver() {
         return checkRows() || checkColumns() || checkDiagonalFromTopLeft() || checkDiagonalsFromBottomLeft();
     }
 
+    /**
+     * Check if there is a row with the same three colors.
+     * @return {@code true} if a colored row is found
+     */
     @SuppressWarnings("DuplicatedCode")
     private boolean checkRows() {
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -86,6 +146,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return false;
     }
 
+    /**
+     * Checks if there is a column with the same three colors.
+     * @return {@code true} if a colored column is found
+     */
     @SuppressWarnings("DuplicatedCode")
     private boolean checkColumns() {
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -108,6 +172,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return false;
     }
 
+    /**
+     * Checks if the primary diagonal has the same three colors.
+     * @return {@code true} if the diagonal has the same colors
+     */
     private boolean checkDiagonalFromTopLeft() {
         Piece piece = gameBoard[0][0].get();
         if (piece == Piece.NONE) return false;
@@ -118,6 +186,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return true;
     }
 
+    /**
+     * Checks if the secondary diagonal has the same three colors.
+     * @return {@code true} if the diagonal has the same colors
+     */
     private boolean checkDiagonalsFromBottomLeft() {
         Piece piece = gameBoard[BOARD_SIZE - 1][0].get();
         if (piece == Piece.NONE) return false;
@@ -128,6 +200,12 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return true;
     }
 
+    /**
+     * Returns the {@link Status} of the current board game.
+     * @return {@link Status#IN_PROGRESS} if the game is still in progress,
+     * {@link Status#PLAYER_1_WINS} if Player1 has won,
+     * and {@link Status#PLAYER_2_WINS} if Player2 has won
+     */
     @Override
     public Status getStatus() {
         if (isGameOver()) {
@@ -140,6 +218,14 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return Status.IN_PROGRESS;
     }
 
+    /**
+     * Determines if the specified position counts as a legal move.
+     * A move is legal if the position contains {@link Piece#NONE},
+     * {@link Piece#RED} or {@link Piece#YELLOW}.
+     * @param move a {@link Position} of a move to be analyzed
+     * @return {@code true} if the {@link Position} counts as a legal move,
+     * otherwise {@code false}
+     */
     @Override
     public boolean isLegalMove(Position move) {
         if (!isOnTheBoard(move) || isGameOver()) return false;
@@ -150,10 +236,23 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         };
     }
 
+    /**
+     * Determines if a specified position is on the game board.
+     * @param move the {@link Position} to be analyzed
+     * @return {@code true} if the position is on the board,
+     * otherwise {@code false}
+     */
     private boolean isOnTheBoard(Position move) {
         return move.row() >= 0 && move.col() >= 0 && move.row() < BOARD_SIZE && move.col() < BOARD_SIZE;
     }
 
+    /**
+     * Makes a move with the {@link #nextPlayer} at the specified position.
+     * @param move the {@link Position} of the move to be played
+     * @throws IllegalArgumentException if an illegal move is played
+     * @throws IllegalStateException if a legal move
+     * was trying to move a {@link Piece#GREEN}
+     */
     @Override
     public void makeMove(Position move) {
         if (!isLegalMove(move)) {
@@ -174,6 +273,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info(String.format("Made a move (%d, %d), which is now %s", move.row(), move.col(), getPiece(move.row(), move.col())));
     }
 
+    /**
+     * Gathers all the legal moves in the current position.
+     * @return a {@link Set} of every legal move's position
+     */
     @Override
     public Set<Position> getLegalMoves() {
         Set<Position> legalMoves = new HashSet<>();
@@ -188,6 +291,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return legalMoves;
     }
 
+    /**
+     * Saves the current game state to a specified file.
+     * @param file the file in which to save
+     * @throws IOException if an IO write error of some sort occurs
+     */
     public void saveGameStateToFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = new GameSave(getBoardData(), getNextPlayer());
@@ -195,6 +303,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info(String.format("Saved game state to file: %s", file.getAbsolutePath()));
     }
 
+    /**
+     * Loads a game state from a specified file.
+     * @param file the file from where to load a previous save
+     * @throws IOException if an IO read error of some sort occurs
+     */
     public void loadGameStateFromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = mapper.readValue(file, GameSave.class);
@@ -202,6 +315,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info(String.format("Loaded game state from file: %s", file.getAbsolutePath()));
     }
 
+    /**
+     * Helper function for saving the game state,
+     * which unpacks pieces from their wrappers.
+     * @return a {@link Piece} array of arrays that represent the game board
+     */
     private Piece[][] getBoardData() {
         Piece[][] boardData = new Piece[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -212,6 +330,12 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return boardData;
     }
 
+    /**
+     * Helper function for loading a game state,
+     * which wraps the pieces and the next player.
+     * @param boardData a {@link Piece} array of arrays that represent the game board
+     * @param player the {@link Player} on the current turn
+     */
     private void loadBoardData(Piece[][] boardData, Player player) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -221,6 +345,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         nextPlayer.set(player);
     }
 
+    /**
+     * Creates a deep copy of this model.
+     * @return the new copy of this model
+     */
     @SuppressWarnings("unchecked")
     @Override
     public BoardGameModel copy() {
@@ -236,6 +364,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return stateCopy;
     }
 
+    /**
+     * Creates a string from the current state of the game board.
+     * @return a string representing the game board
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
