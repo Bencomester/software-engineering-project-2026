@@ -65,7 +65,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     }
 
     /**
-     * Returns the {@link Player} who has the next turn
+     * Returns the {@link Player} who has the next turn.
      * @return the Player who has the next turn
      */
     @Override
@@ -80,7 +80,8 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * @param col The index of the column specified
      * @return ReadOnlyProperty of a {@link Piece}
      */
-    public ReadOnlyObjectProperty<Piece> getPieceProperty(int row, int col) {
+    public ReadOnlyObjectProperty<Piece> getPieceProperty(final int row,
+                                                          final int col) {
         return gameBoard[row][col].getReadOnlyProperty();
     }
 
@@ -90,7 +91,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * @param col The index of the column specified
      * @return the {@link Piece} at the specified square
      */
-    public Piece getPiece(int row, int col) {
+    public Piece getPiece(final int row, final int col) {
         return gameBoard[row][col].get();
     }
 
@@ -117,7 +118,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     @Override
     public boolean isGameOver() {
-        return checkRows() || checkColumns() || checkDiagonalFromTopLeft() || checkDiagonalsFromBottomLeft();
+        return checkRows()
+                || checkColumns()
+                || checkDiagonalFromTopLeft()
+                || checkDiagonalsFromBottomLeft();
     }
 
     /**
@@ -129,7 +133,9 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         for (int i = 0; i < BOARD_SIZE; i++) {
             boolean areRowPiecesSame = true;
             Piece piece = gameBoard[i][0].get();
-            if (piece == Piece.NONE) continue;
+            if (piece == Piece.NONE) {
+                continue;
+            }
 
             for (int j = 1; j < BOARD_SIZE; j++) {
                 if (piece != gameBoard[i][j].get()) {
@@ -155,7 +161,9 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         for (int i = 0; i < BOARD_SIZE; i++) {
             boolean areRowPiecesSame = true;
             Piece piece = gameBoard[0][i].get();
-            if (piece == Piece.NONE) continue;
+            if (piece == Piece.NONE) {
+                continue;
+            }
 
             for (int j = 1; j < BOARD_SIZE; j++) {
                 if (piece != gameBoard[j][i].get()) {
@@ -178,10 +186,14 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     private boolean checkDiagonalFromTopLeft() {
         Piece piece = gameBoard[0][0].get();
-        if (piece == Piece.NONE) return false;
+        if (piece == Piece.NONE) {
+            return false;
+        }
 
         for (int i = 1; i < BOARD_SIZE; i++) {
-            if (piece != gameBoard[i][i].get()) return false;
+            if (piece != gameBoard[i][i].get()) {
+                return false;
+            }
         }
         return true;
     }
@@ -192,10 +204,14 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     private boolean checkDiagonalsFromBottomLeft() {
         Piece piece = gameBoard[BOARD_SIZE - 1][0].get();
-        if (piece == Piece.NONE) return false;
+        if (piece == Piece.NONE) {
+            return false;
+        }
 
         for (int i = 1; i < BOARD_SIZE; i++) {
-            if (piece != gameBoard[BOARD_SIZE - i - 1][i].get()) return false;
+            if (piece != gameBoard[BOARD_SIZE - i - 1][i].get()) {
+                return false;
+            }
         }
         return true;
     }
@@ -227,8 +243,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * otherwise {@code false}
      */
     @Override
-    public boolean isLegalMove(Position move) {
-        if (!isOnTheBoard(move) || isGameOver()) return false;
+    public boolean isLegalMove(final Position move) {
+        if (!isOnTheBoard(move) || isGameOver()) {
+            return false;
+        }
 
         return switch (gameBoard[move.row()][move.col()].get()) {
             case NONE, YELLOW, RED -> true;
@@ -242,8 +260,9 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * @return {@code true} if the position is on the board,
      * otherwise {@code false}
      */
-    private boolean isOnTheBoard(Position move) {
-        return move.row() >= 0 && move.col() >= 0 && move.row() < BOARD_SIZE && move.col() < BOARD_SIZE;
+    private boolean isOnTheBoard(final Position move) {
+        return move.row() >= 0 && move.col() >= 0
+                && move.row() < BOARD_SIZE && move.col() < BOARD_SIZE;
     }
 
     /**
@@ -254,7 +273,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * was trying to move a {@link Piece#GREEN}
      */
     @Override
-    public void makeMove(Position move) {
+    public void makeMove(final Position move) {
         if (!isLegalMove(move)) {
             Logger.warn("An invalid move was made!");
             throw new IllegalArgumentException();
@@ -270,7 +289,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         );
 
         nextPlayer.set(nextPlayer.get().opponent());
-        Logger.info(String.format("Made a move (%d, %d), which is now %s", move.row(), move.col(), getPiece(move.row(), move.col())));
+        Logger.info("Made a move ({}, {}), which is now {}",
+                move.row(),
+                move.col(),
+                getPiece(move.row(), move.col()));
     }
 
     /**
@@ -284,10 +306,12 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 Position move = new Position(i, j);
-                if (isLegalMove(move)) legalMoves.add(move);
+                if (isLegalMove(move)) {
+                    legalMoves.add(move);
+                }
             }
         }
-        Logger.info(String.format("List of all legal moves: %s",  legalMoves));
+        Logger.info("List of all legal moves: {}",  legalMoves);
         return legalMoves;
     }
 
@@ -296,11 +320,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * @param file the file in which to save
      * @throws IOException if an IO write error of some sort occurs
      */
-    public void saveGameStateToFile(File file) throws IOException {
+    public void saveGameStateToFile(final File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = new GameSave(getBoardData(), getNextPlayer());
         mapper.writerWithDefaultPrettyPrinter().writeValue(file, save);
-        Logger.info(String.format("Saved game state to file: %s", file.getAbsolutePath()));
+        Logger.info("Saved game state to file: {}", file.getAbsolutePath());
     }
 
     /**
@@ -308,11 +332,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * @param file the file from where to load a previous save
      * @throws IOException if an IO read error of some sort occurs
      */
-    public void loadGameStateFromFile(File file) throws IOException {
+    public void loadGameStateFromFile(final File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = mapper.readValue(file, GameSave.class);
         loadBoardData(save.board(), save.nextPlayer());
-        Logger.info(String.format("Loaded game state from file: %s", file.getAbsolutePath()));
+        Logger.info("Loaded game state from file: {}", file.getAbsolutePath());
     }
 
     /**
@@ -333,10 +357,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     /**
      * Helper function for loading a game state,
      * which wraps the pieces and the next player.
-     * @param boardData a {@link Piece} array of arrays that represent the game board
+     * @param boardData a {@link Piece} array of arrays
+     *                  that represent the game board
      * @param player the {@link Player} on the current turn
      */
-    private void loadBoardData(Piece[][] boardData, Player player) {
+    private void loadBoardData(final Piece[][] boardData, final Player player) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 gameBoard[i][j].set(boardData[i][j]);
@@ -356,7 +381,8 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         stateCopy.gameBoard = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                stateCopy.gameBoard[i][j] = new ReadOnlyObjectWrapper<>(gameBoard[i][j].get());
+                stateCopy.gameBoard[i][j] =
+                        new ReadOnlyObjectWrapper<>(gameBoard[i][j].get());
             }
         }
         stateCopy.nextPlayer = new ReadOnlyObjectWrapper<>(nextPlayer.get());
