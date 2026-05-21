@@ -20,6 +20,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Controller for the starting screen.
+ * This is where player names are entered and previous results are displayed.
+ */
 public class StartScreenController {
 
     /**

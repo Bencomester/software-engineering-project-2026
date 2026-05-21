@@ -10,6 +10,9 @@ import org.tinylog.Logger;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Main entry point of JavaFX application.
+ */
 public final class BoardGameApplication extends Application {
 
     @Override

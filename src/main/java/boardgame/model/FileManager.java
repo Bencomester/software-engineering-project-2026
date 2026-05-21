@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * Utility class for the saving and loading of game states and results.
+ */
 public final class FileManager {
 
     /**

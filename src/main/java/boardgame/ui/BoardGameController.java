@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controls the user interface of the board game.
+ */
 public class BoardGameController {
 
     /**

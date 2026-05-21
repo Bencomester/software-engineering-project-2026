@@ -5,6 +5,9 @@ import boardgame.ui.BoardGameApplication;
 import javafx.application.Application;
 import org.tinylog.Logger;
 
+/**
+ * This is the starting point of the software.
+ */
 public final class Main {
 
     /**
