@@ -25,7 +25,8 @@ import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BoardGameController {
 
@@ -192,7 +193,9 @@ public class BoardGameController {
                 player1Name.get(),
                 player2Name.get(),
                 getNextPlayerOpponentName(),
-                LocalDate.now().toString()
+                LocalDateTime.now().format(
+                        DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+                )
         );
 
         try {
