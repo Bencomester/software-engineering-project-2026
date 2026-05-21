@@ -1,14 +1,11 @@
 package boardgame.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import common.util.board.Position;
 import game.State;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import org.tinylog.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -105,6 +102,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
             }
         }
 
+        nextPlayer.set(Player.PLAYER_2);
         nextPlayer.set(Player.PLAYER_1);
         Logger.info("Game Board reset");
     }
@@ -293,6 +291,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
                 move.row(),
                 move.col(),
                 getPiece(move.row(), move.col()));
+
+        if (isGameOver()) {
+            Logger.info("{} has won the game!", nextPlayer.get().opponent());
+        }
     }
 
     /**
@@ -316,35 +318,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     }
 
     /**
-     * Saves the current game state to a specified file.
-     * @param file the file in which to save
-     * @throws IOException if an IO write error of some sort occurs
-     */
-    public void saveGameStateToFile(final File file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        GameSave save = new GameSave(getBoardData(), getNextPlayer());
-        mapper.writerWithDefaultPrettyPrinter().writeValue(file, save);
-        Logger.info("Saved game state to file: {}", file.getAbsolutePath());
-    }
-
-    /**
-     * Loads a game state from a specified file.
-     * @param file the file from where to load a previous save
-     * @throws IOException if an IO read error of some sort occurs
-     */
-    public void loadGameStateFromFile(final File file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        GameSave save = mapper.readValue(file, GameSave.class);
-        loadBoardData(save.board(), save.nextPlayer());
-        Logger.info("Loaded game state from file: {}", file.getAbsolutePath());
-    }
-
-    /**
      * Helper function for saving the game state,
      * which unpacks pieces from their wrappers.
      * @return a {@link Piece} array of arrays that represent the game board
      */
-    private Piece[][] getBoardData() {
+    public Piece[][] getBoardData() {
         Piece[][] boardData = new Piece[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -361,7 +339,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      *                  that represent the game board
      * @param player the {@link Player} on the current turn
      */
-    private void loadBoardData(final Piece[][] boardData, final Player player) {
+    public void loadBoardData(final Piece[][] boardData, final Player player) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 gameBoard[i][j].set(boardData[i][j]);
