@@ -25,6 +25,14 @@ public final class FileManager {
     private FileManager() { }
 
     /**
+     * Returns a list of previous game results.
+     * @return array list of previous game results
+     */
+    public static ArrayList<GameResult> getGameResults() {
+        return gameResults;
+    }
+
+    /**
      * Saves the specified game result to {@link #RESULTS_FILE}.
      * @param result the specified result to be saved
      * @throws IOException if there is an error while writing the file

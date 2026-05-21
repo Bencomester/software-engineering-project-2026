@@ -1,19 +1,31 @@
 package boardgame.ui;
 
+import boardgame.model.FileManager;
+import boardgame.model.GameResult;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class StartScreenController {
+
+    /**
+     * Specifies how many of the previous game results are displayed.
+     */
+    private static final int NUM_RESULTS = 3;
 
     /**
      * Text Box for entering the name of the first player.
@@ -26,6 +38,48 @@ public class StartScreenController {
      */
     @FXML
     private TextField player2;
+
+    /**
+     * Container for listing previous game results.
+     */
+    @FXML
+    private VBox resultsBox;
+
+    /**
+     * Automatically loaded by JavaFX when the screen loads.
+     * Loads and displays previous game results.
+     */
+    @FXML
+    public void initialize() {
+        try {
+            FileManager.loadResults();
+            ArrayList<GameResult> results = FileManager.getGameResults();
+
+            if (results.isEmpty()) {
+                resultsBox.getChildren().add(
+                        new Label("No previous games yet.")
+                );
+                return;
+            }
+
+            List<GameResult> recentGames = results.stream()
+                    .sorted(Comparator.comparing(GameResult::date).reversed())
+                    .limit(NUM_RESULTS).toList();
+            for (GameResult result : recentGames) {
+                String text = String.format("%s vs %s - Winner: %s - %s",
+                        result.player1(),
+                        result.player2(),
+                        result.winner(),
+                        result.date()
+                );
+
+                resultsBox.getChildren().add(new Label(text));
+            }
+
+        } catch (IOException e) {
+            Logger.error("Failed to load results: {}", e.getMessage());
+        }
+    }
 
     /**
      * Called when the Start Game button is pressed.

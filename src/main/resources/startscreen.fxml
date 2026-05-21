@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:controller="boardgame.ui.StartScreenController" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boardgame.ui.StartScreenController">
    <children>
       <Label text="Tic-Tac-Toe but better">
          <font>
@@ -35,5 +35,6 @@
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </VBox.margin>
       </Button>
+      <VBox fx:id="resultsBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" />
    </children>
 </VBox>
