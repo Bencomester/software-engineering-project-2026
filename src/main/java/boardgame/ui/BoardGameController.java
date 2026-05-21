@@ -1,6 +1,8 @@
 package boardgame.ui;
 
 import boardgame.model.BoardGameModel;
+import boardgame.model.FileManager;
+import boardgame.model.GameResult;
 import boardgame.model.Piece;
 import common.util.board.Position;
 import javafx.application.Platform;
@@ -23,6 +25,7 @@ import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class BoardGameController {
 
@@ -175,6 +178,27 @@ public class BoardGameController {
         Logger.info("Click registered: {}", pos);
         if (model.isLegalMove(pos)) {
             model.makeMove(pos);
+            if (model.isGameOver()) {
+                saveResult();
+            }
+        }
+    }
+
+    /**
+     * Saves the result of the game.
+     */
+    private void saveResult() {
+        GameResult gameResult = new GameResult(
+                player1Name.get(),
+                player2Name.get(),
+                getNextPlayerOpponentName(),
+                LocalDate.now().toString()
+        );
+
+        try {
+            FileManager.saveResult(gameResult);
+        } catch (IOException e) {
+            Logger.error("Failed to save game result: {}", e.getMessage());
         }
     }
 
@@ -215,7 +239,7 @@ public class BoardGameController {
         }
 
         try {
-            model.saveGameStateToFile(file);
+            FileManager.saveGameStateToFile(model, file);
         } catch (IOException e) {
             Logger.error("Couldn't save game: {}", e.getMessage());
             showError("Failed to save game", e);
@@ -242,7 +266,7 @@ public class BoardGameController {
         }
 
         try {
-            model.loadGameStateFromFile(file);
+            FileManager.loadGameStateFromFile(model, file);
         }  catch (IOException e) {
             Logger.error("Couldn't load game: {}", e.getMessage());
             showError("Failed to load game", e);

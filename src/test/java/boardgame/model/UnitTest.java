@@ -158,15 +158,15 @@ public class UnitTest {
     }
 
     @Test
-    void saveAndLoadGaneState(@TempDir Path tempDir) throws IOException {
+    void saveAndLoadGameState(@TempDir Path tempDir) throws IOException {
         File saveFile = tempDir.resolve("temp_save.json").toFile();
         BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(0, 0);
 
         model.makeMove(pos1);
-        model.saveGameStateToFile(saveFile);
+        FileManager.saveGameStateToFile(model, saveFile);
         model = new BoardGameModel();
-        model.loadGameStateFromFile(saveFile);
+        FileManager.loadGameStateFromFile(model, saveFile);
 
         assertTrue(saveFile.exists());
         assertTrue(saveFile.isFile());
