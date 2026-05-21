@@ -73,6 +73,11 @@ public class BoardGameController {
     private final SimpleStringProperty player2Name = new SimpleStringProperty();
 
     /**
+     * Default constructor required by JavaFX controllers.
+     */
+    public BoardGameController() { }
+
+    /**
      * Sets name of the first player to the specified string.
      * @param player1 the specified string for the name
      */

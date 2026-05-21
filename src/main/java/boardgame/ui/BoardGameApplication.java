@@ -15,6 +15,11 @@ import java.util.Objects;
  */
 public final class BoardGameApplication extends Application {
 
+    /**
+     * Default constructor for JavaFX.
+     */
+    public BoardGameApplication() { }
+
     @Override
     public void start(final Stage stage) throws IOException {
         Parent root = FXMLLoader.load(

@@ -50,6 +50,11 @@ public class StartScreenController {
     private VBox resultsBox;
 
     /**
+     * Default constructor required by JavaFX controllers.
+     */
+    public StartScreenController() { }
+
+    /**
      * Automatically loaded by JavaFX when the screen loads.
      * Loads and displays previous game results.
      */
