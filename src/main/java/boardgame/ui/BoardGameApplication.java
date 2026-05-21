@@ -15,7 +15,9 @@ public final class BoardGameApplication extends Application {
     @Override
     public void start(final Stage stage) throws IOException {
         Parent root = FXMLLoader.load(
-                Objects.requireNonNull(getClass().getResource("/ui.fxml"))
+                Objects.requireNonNull(
+                        getClass().getResource("/startscreen.fxml")
+                )
         );
         stage.setTitle("Tic-Tac-Toe but better");
         Scene scene = new Scene(root);
@@ -23,6 +25,6 @@ public final class BoardGameApplication extends Application {
         stage.setResizable(false);
         stage.show();
 
-        Logger.info("Application started and scene loaded");
+        Logger.info("Application started and start scene loaded");
     }
 }

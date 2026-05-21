@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -55,7 +56,55 @@ public class BoardGameController {
             new EnumImageStorage<>(Piece.class);
 
     /**
-     * Called once when the UI Application is started.
+     * Property wrapping the name of the first player.
+     */
+    private final SimpleStringProperty player1Name = new SimpleStringProperty();
+
+    /**
+     * Property wrapping the name of the second player.
+     */
+    private final SimpleStringProperty player2Name = new SimpleStringProperty();
+
+    /**
+     * Sets name of the first player to the specified string.
+     * @param player1 the specified string for the name
+     */
+    public void setPlayer1Name(final String player1) {
+        this.player1Name.set(player1);
+    }
+
+    /**
+     * Sets name of the second player to the specified string.
+     * @param player2 the specified string for the name
+     */
+    public void setPlayer2Name(final String player2) {
+        this.player2Name.set(player2);
+    }
+
+    /**
+     * Returns the name of the player on the current turn.
+     * @return the name of the player
+     */
+    private String getNextPlayerName() {
+        return switch (model.getNextPlayer()) {
+            case PLAYER_1 -> player1Name.get();
+            case PLAYER_2 -> player2Name.get();
+        };
+    }
+
+    /**
+     * Returns the opponent name of the current player on turn.
+     * @return the name of the player
+     */
+    private String getNextPlayerOpponentName() {
+        return switch (model.getNextPlayer()) {
+            case PLAYER_1 -> player2Name.get();
+            case PLAYER_2 -> player1Name.get();
+        };
+    }
+
+    /**
+     * Called once when the controller is loaded.
      */
     @FXML
     public void initialize() {
@@ -67,6 +116,7 @@ public class BoardGameController {
             }
         }
 
+        board.setGridLinesVisible(true);
         createLabelBind();
         Logger.info("Controller has been initialized");
     }
@@ -241,7 +291,7 @@ public class BoardGameController {
 
     /**
      * Creates a bind between {@link #turnLabel} and
-     * {@link BoardGameModel#getNextPlayerProperty()}.
+     * {@link BoardGameModel#getNextPlayerProperty()} using player names.
      */
     private void createLabelBind() {
         turnLabel.textProperty().bind(
@@ -249,14 +299,17 @@ public class BoardGameController {
                         () -> {
                             if (model.isGameOver()) {
                                 return String.format("Winner: %s!",
-                                        model.getNextPlayer().opponent()
+                                        getNextPlayerOpponentName()
                                 );
                             } else {
                                 return String.format("Turn: %s",
-                                        model.getNextPlayer()
+                                        getNextPlayerName()
                                 );
                             }
-                        }, model.getNextPlayerProperty()
+                        },
+                        model.getNextPlayerProperty(),
+                        player1Name,
+                        player2Name
                 )
         );
     }
