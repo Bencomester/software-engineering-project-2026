@@ -79,6 +79,7 @@ public class UnitTest {
         assertEquals("G--\n---\n---\n", model.toString());
 
         assertThrows(IllegalArgumentException.class, () -> model.makeMove(pos));
+        assertThrows(IllegalArgumentException.class, () -> model.makeMove(new Position(-1, 5)));
     }
 
     @Test
