@@ -38,7 +38,8 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
 
     /**
-     * Constructor for a model of the board game.
+     * Creates a square game board of size {@link #BOARD_SIZE}
+     * and sets starting player.
      */
     @SuppressWarnings("unchecked")
     public BoardGameModel() {
@@ -79,7 +80,10 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     public ReadOnlyObjectProperty<Piece> getPieceProperty(final int row,
                                                           final int col) {
-        return gameBoard[row][col].getReadOnlyProperty();
+        if (isOnTheBoard(new Position(row, col))) {
+            return gameBoard[row][col].getReadOnlyProperty();
+        }
+        return new ReadOnlyObjectWrapper<>(Piece.NONE);
     }
 
     /**
@@ -282,7 +286,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
                     case NONE -> Piece.RED;
                     case RED -> Piece.YELLOW;
                     case YELLOW -> Piece.GREEN;
-                    case GREEN -> throw new IllegalStateException();
+                    default -> throw new IllegalStateException();
                 }
         );
 
