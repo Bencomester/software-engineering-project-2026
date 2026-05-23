@@ -4,7 +4,7 @@ import boardgame.model.BoardGameModel;
 import common.util.board.Position;
 import game.console.Game;
 
-import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -33,16 +33,15 @@ public final class ConsoleGame {
      * where n and m are integers.
      * @param moveString input string to convert
      * @return a position matching the input string
-     * @throws IllegalArgumentException if the string doesn't match
+     * @throws IllegalArgumentException if the string doesn't match the pattern
      * the required format
      */
     private static Position parseMoveFromString(final String moveString) {
-        Scanner sc = new Scanner(moveString);
-        try {
+        try (Scanner sc = new Scanner(moveString)) {
             int x = sc.nextInt();
             int y = sc.nextInt();
             return new Position(x, y);
-        }  catch (InputMismatchException e) {
+        }  catch (NoSuchElementException e) {
             throw new IllegalArgumentException();
         }
     }
