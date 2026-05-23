@@ -61,8 +61,7 @@ public class StartScreenController {
     @FXML
     public void initialize() {
         try {
-            FileManager.loadResults();
-            ArrayList<GameResult> results = FileManager.getGameResults();
+            ArrayList<GameResult> results = FileManager.loadAndGetResults();
 
             if (results.isEmpty()) {
                 resultsBox.getChildren().add(

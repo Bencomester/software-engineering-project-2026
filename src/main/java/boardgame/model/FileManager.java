@@ -20,20 +20,7 @@ public final class FileManager {
             Paths.get(System.getProperty("user.home"))
                     .resolve(".ttt_bb_results.json").toFile();
 
-    /**
-     * Contains all previous game results.
-     */
-    private static ArrayList<GameResult> gameResults = new ArrayList<>();
-
     private FileManager() { }
-
-    /**
-     * Returns a list of previous game results.
-     * @return array list of previous game results
-     */
-    public static ArrayList<GameResult> getGameResults() {
-        return gameResults;
-    }
 
     /**
      * Saves the specified game result to {@link #RESULTS_FILE}.
@@ -41,7 +28,7 @@ public final class FileManager {
      * @throws IOException if there is an error while writing the file
      */
     public static void saveResult(final GameResult result) throws IOException {
-        loadResults();
+        ArrayList<GameResult> gameResults = loadAndGetResults();
         gameResults.add(result);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -53,17 +40,20 @@ public final class FileManager {
 
     /**
      * Loads all game results from {@link #RESULTS_FILE}
-     * to {@link #gameResults}.
+     * and returns them in a list.
+     * @return array list of previous game results
      * @throws IOException if there is an error while reading the file
      */
-    public static void loadResults() throws IOException {
+    public static ArrayList<GameResult> loadAndGetResults() throws IOException {
         if (!RESULTS_FILE.exists()) {
-            gameResults = new ArrayList<>();
-            return;
+            return new ArrayList<>();
         }
 
+        Logger.info("Loading game results from: {}",
+                RESULTS_FILE.getAbsolutePath());
+
         ObjectMapper mapper = new ObjectMapper();
-        gameResults = mapper.readValue(
+        return mapper.readValue(
                 RESULTS_FILE,
                 mapper.getTypeFactory()
                         .constructCollectionType(
@@ -72,8 +62,7 @@ public final class FileManager {
                         )
         );
 
-        Logger.info("Loaded game results from: {}",
-                RESULTS_FILE.getAbsolutePath());
+
     }
 
     /**
