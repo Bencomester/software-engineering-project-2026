@@ -106,7 +106,6 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
             }
         }
 
-        nextPlayer.set(Player.PLAYER_2);
         nextPlayer.set(Player.PLAYER_1);
         Logger.info("Game Board reset");
     }

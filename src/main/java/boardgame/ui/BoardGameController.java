@@ -65,12 +65,12 @@ public class BoardGameController {
     /**
      * Property wrapping the name of the first player.
      */
-    private final SimpleStringProperty player1Name = new SimpleStringProperty();
+    private final SimpleStringProperty player1Name = new SimpleStringProperty("Player 1");
 
     /**
      * Property wrapping the name of the second player.
      */
-    private final SimpleStringProperty player2Name = new SimpleStringProperty();
+    private final SimpleStringProperty player2Name = new SimpleStringProperty("Player 2");
 
     /**
      * Default constructor required by JavaFX controllers.
@@ -228,6 +228,7 @@ public class BoardGameController {
     @FXML
     private void onReset() {
         model.resetGameBoard();
+        createLabelBind();
     }
 
     /**
@@ -331,21 +332,23 @@ public class BoardGameController {
     private void createLabelBind() {
         turnLabel.textProperty().bind(
                 Bindings.createStringBinding(
-                        () -> {
-                            if (model.isGameOver()) {
-                                return String.format("Winner: %s!",
-                                        getNextPlayerOpponentName()
-                                );
-                            } else {
-                                return String.format("Turn: %s",
-                                        getNextPlayerName()
-                                );
-                            }
-                        },
+                        this::getFormattedLabelText,
                         model.getNextPlayerProperty(),
                         player1Name,
                         player2Name
                 )
         );
+    }
+
+    private String getFormattedLabelText() {
+        if (model.isGameOver()) {
+            return String.format("Winner: %s!",
+                    getNextPlayerOpponentName()
+            );
+        } else {
+            return String.format("Turn: %s",
+                    getNextPlayerName()
+            );
+        }
     }
 }
