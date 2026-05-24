@@ -121,8 +121,14 @@ public class StartScreenController {
         controller.setPlayer1Name(name1);
         controller.setPlayer2Name(name2);
 
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/style.css")
+                ).toExternalForm()
+        );
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
+        stage.setScene(scene);
         stage.show();
 
         Logger.info("Game started with players: {} and {}", name1, name2);

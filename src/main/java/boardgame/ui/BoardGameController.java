@@ -128,7 +128,6 @@ public class BoardGameController {
             }
         }
 
-        board.setGridLinesVisible(true);
         createLabelBind();
         Logger.info("Controller has been initialized");
     }

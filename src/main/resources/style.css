@@ -1,0 +1,78 @@
+.root {
+    -fx-base: rgba(43, 43, 43, 255);
+    -fx-background-color: -fx-base;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.label {
+    -fx-text-fill: #f8f9fa;
+}
+
+.text-field {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #457b9d;
+    -fx-border-width: 1.5;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: #1d3557;
+    -fx-effect: dropshadow(three-pass-box, rgba(69, 123, 157, 0.5), 10, 0, 0, 0);
+}
+
+.button {
+    -fx-background-color: #457b9d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 16px;
+}
+
+.button:hover {
+    -fx-background-color: #1d3557;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+#board {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 15;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #333333;
+    -fx-border-width: 3;
+}
+
+.piece {
+    -fx-background-color: #333333;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.piece:hover {
+    -fx-background-color: #4a4a4a;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+#turnLabel {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e63946;
+    -fx-effect: dropshadow(two-pass-box, rgba(0, 0, 0, 0.4), 5, 0, 0, 2);
+}
+
+.menu-bar {
+    -fx-background-color: #1f1f1f;
+    -fx-border-color: #333333;
+    -fx-border-width: 0 0 1 0;
+}
