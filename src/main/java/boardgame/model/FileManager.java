@@ -1,5 +1,6 @@
 package boardgame.model;
 
+import boardgame.ui.BoardGameController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.tinylog.Logger;
 
@@ -74,13 +75,50 @@ public final class FileManager {
     public static void saveGameStateToFile(
             final BoardGameModel model,
             final File file) throws IOException {
+        saveGameStateToFile(model, file, "Player 1", "Player 2");
+    }
+
+    /**
+     * Saves the current game state of the model to a specified file.
+     * @param model the model for acquiring the game state
+     * @param file the file in which to save
+     * @param name1 the name of the first player
+     * @param name2 the name of the second player
+     * @throws IOException if an IO write error of some sort occurs
+     */
+    public static void saveGameStateToFile(
+            final BoardGameModel model,
+            final File file,
+            final String name1, final String name2) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         GameSave save = new GameSave(
                 model.getBoardData(),
-                model.getNextPlayer()
+                model.getNextPlayer(),
+                name1,
+                name2
         );
         mapper.writerWithDefaultPrettyPrinter().writeValue(file, save);
         Logger.info("Saved game state to file: {}", file.getAbsolutePath());
+    }
+
+    /**
+     * Loads a game state to the model from a specified file,
+     * while loading the player names in the controller.
+     * @param model the model to where the game state is loaded
+     * @param file the file from where to load a previous save
+     * @param controller the controller for loading the player names
+     * @throws IOException if an IO read error of some sort occurs
+     */
+    public static void loadGameStateFromFileWithPlayerNames(
+            final BoardGameModel model,
+            final File file,
+            final BoardGameController controller) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        GameSave save = mapper.readValue(file, GameSave.class);
+        model.loadBoardData(save.board(), save.nextPlayer());
+        controller.setPlayer1Name(save.player1name());
+        controller.setPlayer2Name(save.player2name());
+        Logger.info("Loaded game state from file: {}", file.getAbsolutePath());
     }
 
     /**

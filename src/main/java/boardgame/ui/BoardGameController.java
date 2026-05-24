@@ -65,12 +65,14 @@ public class BoardGameController {
     /**
      * Property wrapping the name of the first player.
      */
-    private final SimpleStringProperty player1Name = new SimpleStringProperty("Player 1");
+    private final SimpleStringProperty player1Name =
+            new SimpleStringProperty("Player 1");
 
     /**
      * Property wrapping the name of the second player.
      */
-    private final SimpleStringProperty player2Name = new SimpleStringProperty("Player 2");
+    private final SimpleStringProperty player2Name =
+            new SimpleStringProperty("Player 2");
 
     /**
      * Default constructor required by JavaFX controllers.
@@ -250,7 +252,12 @@ public class BoardGameController {
         }
 
         try {
-            FileManager.saveGameStateToFile(model, file);
+            FileManager.saveGameStateToFile(
+                    model,
+                    file,
+                    player1Name.get(),
+                    player2Name.get()
+            );
         } catch (IOException e) {
             Logger.error("Couldn't save game: {}", e.getMessage());
             showError("Failed to save game", e);
@@ -277,7 +284,7 @@ public class BoardGameController {
         }
 
         try {
-            FileManager.loadGameStateFromFile(model, file);
+            FileManager.loadGameStateFromFileWithPlayerNames(model, file, this);
         }  catch (IOException e) {
             Logger.error("Couldn't load game: {}", e.getMessage());
             showError("Failed to load game", e);
