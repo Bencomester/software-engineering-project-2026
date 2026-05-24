@@ -10,10 +10,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -44,6 +42,11 @@ public class BoardGameController {
      * Height and width of the images that represent the pieces.
      */
     private static final int IMAGE_SIZE = 120;
+
+    /**
+     * Name of the creator displayed in the about section.
+     */
+    private static final String DEVELOPER_NAME = "Bence László Szilágyi";
 
     /**
      * Holds the GridPane UI element which is the game board.
@@ -327,7 +330,7 @@ public class BoardGameController {
                 Java version: %s
                 JavaFX version: %s
                 """.formatted(
-                        System.getProperty("user.name"),
+                        DEVELOPER_NAME,
                         System.getProperty("java.vendor"),
                         System.getProperty("java.version"),
                         System.getProperty("javafx.version")
@@ -341,7 +344,9 @@ public class BoardGameController {
     @FXML
     private void onMainMenu() throws IOException {
         FXMLLoader loader = new FXMLLoader(
-                Objects.requireNonNull(getClass().getResource("/startscreen.fxml"))
+                Objects.requireNonNull(
+                        getClass().getResource("/startscreen.fxml")
+                )
         );
         Parent root = loader.load();
         Scene scene = new Scene(root);
