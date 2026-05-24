@@ -10,7 +10,12 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import jfxutils.images.EnumImageStorage;
 import jfxutils.images.ImageStorage;
 import org.tinylog.Logger;
@@ -27,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Controls the user interface of the board game.
@@ -329,6 +336,25 @@ public class BoardGameController {
 
         Logger.info("About was shown");
         alert.showAndWait();
+    }
+
+    @FXML
+    private void onMainMenu() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                Objects.requireNonNull(getClass().getResource("/startscreen.fxml"))
+        );
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        getClass().getResource("/style.css")
+                ).toExternalForm()
+        );
+        Stage stage = (Stage) board.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+
+        Logger.info("Returned to the main menu");
     }
 
     /**
