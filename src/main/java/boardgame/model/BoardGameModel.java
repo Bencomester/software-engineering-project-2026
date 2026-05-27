@@ -122,7 +122,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         return checkRows()
                 || checkColumns()
                 || checkDiagonalFromTopLeft()
-                || checkDiagonalsFromBottomLeft();
+                || checkDiagonalFromBottomLeft();
     }
 
     /**
@@ -203,7 +203,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * Checks if the secondary diagonal has the same three colors.
      * @return {@code true} if the diagonal has the same colors
      */
-    private boolean checkDiagonalsFromBottomLeft() {
+    private boolean checkDiagonalFromBottomLeft() {
         Piece piece = gameBoard[BOARD_SIZE - 1][0].get();
         if (piece == Piece.NONE) {
             return false;
@@ -270,8 +270,6 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * Makes a move with the {@link #nextPlayer} at the specified position.
      * @param move the {@link Position} of the move to be played
      * @throws IllegalArgumentException if an illegal move is played
-     * @throws IllegalStateException if a legal move
-     * was trying to move a {@link Piece#GREEN}
      */
     @Override
     public void makeMove(final Position move) {
@@ -280,20 +278,17 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
             throw new IllegalArgumentException();
         }
 
+        Piece piece = getPiece(move.row(), move.col());
         gameBoard[move.row()][move.col()].set(
-                switch (getPiece(move.row(), move.col())) {
-                    case NONE -> Piece.RED;
-                    case RED -> Piece.YELLOW;
-                    case YELLOW -> Piece.GREEN;
-                    default -> throw new IllegalStateException();
-                }
+                piece.nextPiece()
         );
+
 
         nextPlayer.set(nextPlayer.get().opponent());
         Logger.info("Made a move ({}, {}), which is now {}",
                 move.row(),
                 move.col(),
-                getPiece(move.row(), move.col()));
+                piece.nextPiece());
 
         if (isGameOver()) {
             Logger.info("{} has won the game!", nextPlayer.get().opponent());

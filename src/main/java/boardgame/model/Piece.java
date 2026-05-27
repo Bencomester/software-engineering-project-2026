@@ -23,5 +23,19 @@ public enum Piece {
     /**
      * Represents a green piece.
      */
-    GREEN
+    GREEN;
+
+    /**
+     * Returns a piece with the next color in order.
+     * @return the piece with the next color
+     * @throws IllegalStateException if called on {@link #GREEN} piece
+     */
+    public Piece nextPiece() {
+        return switch (this) {
+            case NONE -> RED;
+            case RED -> YELLOW;
+            case YELLOW -> GREEN;
+            case GREEN -> throw new IllegalStateException();
+        };
+    }
 }
