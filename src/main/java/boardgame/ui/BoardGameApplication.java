@@ -29,11 +29,6 @@ public final class BoardGameApplication extends Application {
         );
         stage.setTitle("Tic-Tac-Toe but better");
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(
-                        getClass().getResource("/style.css")
-                ).toExternalForm()
-        );
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
