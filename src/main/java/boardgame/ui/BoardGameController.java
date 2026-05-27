@@ -200,6 +200,7 @@ public class BoardGameController {
             model.makeMove(pos);
             if (model.isGameOver()) {
                 saveResult();
+                showGameResult();
             }
         }
     }
@@ -222,6 +223,21 @@ public class BoardGameController {
         } catch (IOException e) {
             Logger.error("Failed to save game result: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Displays a popup with the winning player after the game is over.
+     */
+    private void showGameResult() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(
+                String.format("Winner: %s", getNextPlayerOpponentName())
+        );
+        alert.setContentText("""
+                You can reset the game board or return to \
+                the main menu from the options tab""");
+        alert.showAndWait();
     }
 
     /**
