@@ -102,28 +102,6 @@ public class BoardGameController {
     }
 
     /**
-     * Returns the name of the player on the current turn.
-     * @return the name of the player
-     */
-    private String getNextPlayerName() {
-        return switch (model.getNextPlayer()) {
-            case PLAYER_1 -> player1Name.get();
-            case PLAYER_2 -> player2Name.get();
-        };
-    }
-
-    /**
-     * Returns the opponent name of the current player on turn.
-     * @return the name of the player
-     */
-    private String getNextPlayerOpponentName() {
-        return switch (model.getNextPlayer()) {
-            case PLAYER_1 -> player2Name.get();
-            case PLAYER_2 -> player1Name.get();
-        };
-    }
-
-    /**
      * Called once when the controller is loaded.
      */
     @FXML
@@ -178,11 +156,65 @@ public class BoardGameController {
                     }
                     @Override
                     protected Image computeValue() {
-                    return imageStorage
-                            .get(pieceProperty.get()).orElse(null);
-                }
-        });
+                        return imageStorage
+                                .get(pieceProperty.get()).orElse(null);
+                    }
+                });
         return imageView;
+    }
+
+    /**
+     * Creates a bind between {@link #turnLabel} and
+     * {@link BoardGameModel#getNextPlayerProperty()} using player names.
+     */
+    private void createLabelBind() {
+        turnLabel.textProperty().bind(
+                Bindings.createStringBinding(
+                        this::getFormattedLabelText,
+                        model.getNextPlayerProperty(),
+                        player1Name,
+                        player2Name
+                )
+        );
+    }
+
+    /**
+     * Creates the string for the displayed label
+     * based on the current state of the game.
+     * @return the formatted string
+     */
+    private String getFormattedLabelText() {
+        if (model.isGameOver()) {
+            return String.format("Winner: %s!",
+                    getNextPlayerOpponentName()
+            );
+        } else {
+            return String.format("Turn: %s",
+                    getNextPlayerName()
+            );
+        }
+    }
+
+    /**
+     * Returns the name of the player on the current turn.
+     * @return the name of the player
+     */
+    private String getNextPlayerName() {
+        return switch (model.getNextPlayer()) {
+            case PLAYER_1 -> player1Name.get();
+            case PLAYER_2 -> player2Name.get();
+        };
+    }
+
+    /**
+     * Returns the opponent name of the current player on turn.
+     * @return the name of the player
+     */
+    private String getNextPlayerOpponentName() {
+        return switch (model.getNextPlayer()) {
+            case PLAYER_1 -> player2Name.get();
+            case PLAYER_2 -> player1Name.get();
+        };
     }
 
     /**
@@ -236,7 +268,7 @@ public class BoardGameController {
         );
         alert.setContentText("""
                 You can reset the game board or return to \
-                the main menu from the options tab""");
+                the main menu from the options tab.""");
         alert.showAndWait();
     }
 
@@ -256,6 +288,48 @@ public class BoardGameController {
     private void onReset() {
         model.resetGameBoard();
         createLabelBind();
+    }
+
+    /**
+     * Called when the user click on the About button.
+     * Creates and shows information type alert with details.
+     */
+    @FXML
+    private void onAbout() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Tic-Tac-Toe but better");
+        alert.setContentText("""
+                Created By: %s
+                Java vendor: %s
+                Java version: %s
+                JavaFX version: %s
+                """.formatted(
+                        DEVELOPER_NAME,
+                        System.getProperty("java.vendor"),
+                        System.getProperty("java.version"),
+                        System.getProperty("javafx.version")
+                )
+        );
+
+        Logger.info("About was shown");
+        alert.showAndWait();
+    }
+
+    /**
+     * Called when the user clicks the Main Menu option.
+     * @throws IOException if an IO error occurs while reading fxml
+     */
+    @FXML
+    private void onMainMenu() throws IOException {
+        JFXUtils.loadFXML(
+                JFXUtils.getWindow(board),
+                BoardGameController.class,
+                "/startscreen.fxml",
+                null
+        );
+
+        Logger.info("Returned to the main menu");
     }
 
     /**
@@ -329,70 +403,5 @@ public class BoardGameController {
         alert.setHeaderText(message);
         alert.setContentText(e.getMessage());
         alert.showAndWait();
-    }
-
-    /**
-     * Called when the user click on the About button.
-     * Creates and shows information type alert with details.
-     */
-    @FXML
-    private void onAbout() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Tic-Tac-Toe but better");
-        alert.setContentText("""
-                Created By: %s
-                Java vendor: %s
-                Java version: %s
-                JavaFX version: %s
-                """.formatted(
-                        DEVELOPER_NAME,
-                        System.getProperty("java.vendor"),
-                        System.getProperty("java.version"),
-                        System.getProperty("javafx.version")
-                )
-        );
-
-        Logger.info("About was shown");
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void onMainMenu() throws IOException {
-        JFXUtils.loadFXML(
-                JFXUtils.getWindow(board),
-                BoardGameController.class,
-                "/startscreen.fxml",
-                null
-        );
-
-        Logger.info("Returned to the main menu");
-    }
-
-    /**
-     * Creates a bind between {@link #turnLabel} and
-     * {@link BoardGameModel#getNextPlayerProperty()} using player names.
-     */
-    private void createLabelBind() {
-        turnLabel.textProperty().bind(
-                Bindings.createStringBinding(
-                        this::getFormattedLabelText,
-                        model.getNextPlayerProperty(),
-                        player1Name,
-                        player2Name
-                )
-        );
-    }
-
-    private String getFormattedLabelText() {
-        if (model.isGameOver()) {
-            return String.format("Winner: %s!",
-                    getNextPlayerOpponentName()
-            );
-        } else {
-            return String.format("Turn: %s",
-                    getNextPlayerName()
-            );
-        }
     }
 }
