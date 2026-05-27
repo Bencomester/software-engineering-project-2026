@@ -4,21 +4,18 @@ import boardgame.model.FileManager;
 import boardgame.model.GameResult;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import jfxutils.JFXUtils;
 import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Controller for the starting screen.
@@ -73,6 +70,7 @@ public class StartScreenController {
             List<GameResult> recentGames = results.stream()
                     .sorted(Comparator.comparing(GameResult::date).reversed())
                     .limit(NUM_RESULTS).toList();
+
             for (GameResult result : recentGames) {
                 String text = String.format("%s vs %s - Winner: %s - %s",
                         result.player1(),
@@ -99,38 +97,39 @@ public class StartScreenController {
      */
     @FXML
     private void onStartGame(final ActionEvent event) throws IOException {
+        Stage stage = JFXUtils.getWindow((Node) event.getSource());
+        JFXUtils.loadFXML(
+                stage,
+                StartScreenController.class,
+                "/ui.fxml",
+                this::setPlayerNames
+        );
+    }
+
+    /**
+     * Sets the name for both players in the specified controller instance.
+     * Names are changed to "Player 1" and "Player 2" by default if they are
+     * empty. If both names are the same, "2" is appended at the end of the
+     * second player's name.
+     * @param controller the specified controller instance
+     */
+    private void setPlayerNames(final BoardGameController controller) {
         String name1 = player1.getText();
         String name2 = player2.getText();
 
         if (name1.isEmpty()) {
             name1 = "Player 1";
         }
+
         if (name2.isEmpty()) {
             name2 = "Player 2";
         }
+
         if (name1.equals(name2)) {
             name2 = String.format("%s2", name1);
         }
 
-        FXMLLoader loader = new FXMLLoader(
-                Objects.requireNonNull(getClass().getResource("/ui.fxml"))
-        );
-        Parent root = loader.load();
-
-        BoardGameController controller = loader.getController();
         controller.setPlayer1Name(name1);
         controller.setPlayer2Name(name2);
-
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                Objects.requireNonNull(
-                        getClass().getResource("/style.css")
-                ).toExternalForm()
-        );
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
-
-        Logger.info("Game started with players: {} and {}", name1, name2);
     }
 }
