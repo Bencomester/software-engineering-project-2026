@@ -87,27 +87,103 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     }
 
     /**
-     * Returns the {@link Piece} at the specified square.
-     * @param row The index of the row specified
-     * @param col The index of the column specified
-     * @return the {@link Piece} at the specified square
+     * Determines if a specified position is on the game board.
+     * @param move the {@link Position} to be analyzed
+     * @return {@code true} if the position is on the board,
+     * otherwise {@code false}
      */
-    public Piece getPiece(final int row, final int col) {
-        return gameBoard[row][col].get();
+    private boolean isOnTheBoard(final Position move) {
+        return move.row() >= 0 && move.col() >= 0
+                && move.row() < BOARD_SIZE && move.col() < BOARD_SIZE;
     }
 
     /**
-     * Resets the board game to the starting position.
+     * Makes a move with the {@link #nextPlayer} at the specified position.
+     * @param move the {@link Position} of the move to be played
+     * @throws IllegalArgumentException if an illegal move is played
      */
-    public void resetGameBoard() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                gameBoard[i][j].set(Piece.NONE);
-            }
+    @Override
+    public void makeMove(final Position move) {
+        if (!isLegalMove(move)) {
+            Logger.warn("An invalid move was made!");
+            throw new IllegalArgumentException();
         }
 
-        nextPlayer.set(Player.PLAYER_1);
-        Logger.info("Game Board reset");
+        Piece piece = gameBoard[move.row()][move.col()].get();
+        gameBoard[move.row()][move.col()].set(
+                piece.nextPiece()
+        );
+
+
+        nextPlayer.set(nextPlayer.get().opponent());
+        Logger.info("Made a move ({}, {}), which is now {}",
+                move.row(),
+                move.col(),
+                piece.nextPiece());
+
+        if (isGameOver()) {
+            Logger.info("{} has won the game!", nextPlayer.get().opponent());
+        }
+    }
+
+    /**
+     * Gathers all the legal moves in the current position.
+     * @return a {@link Set} of every legal move's position
+     */
+    @Override
+    public Set<Position> getLegalMoves() {
+        Set<Position> legalMoves = new HashSet<>();
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Position move = new Position(i, j);
+                if (isLegalMove(move)) {
+                    legalMoves.add(move);
+                }
+            }
+        }
+        Logger.info("List of all legal moves: {}",  legalMoves);
+        return legalMoves;
+    }
+
+    /**
+     * Determines if the specified position counts as a legal move.
+     * A move is legal if the position contains {@link Piece#NONE},
+     * {@link Piece#RED} or {@link Piece#YELLOW}.
+     * @param move a {@link Position} of a move to be analyzed
+     * @return {@code true} if the {@link Position} counts as a legal move,
+     * otherwise {@code false}
+     */
+    @Override
+    public boolean isLegalMove(final Position move) {
+        if (!isOnTheBoard(move) || isGameOver()) {
+            return false;
+        }
+
+        try {
+            gameBoard[move.row()][move.col()].get().nextPiece();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the {@link Status} of the current board game.
+     * @return {@link Status#IN_PROGRESS} if the game is still in progress,
+     * {@link Status#PLAYER_1_WINS} if Player1 has won,
+     * and {@link Status#PLAYER_2_WINS} if Player2 has won
+     */
+    @Override
+    public Status getStatus() {
+        if (isGameOver()) {
+            return switch (nextPlayer.get()) {
+                case PLAYER_1 -> Status.PLAYER_2_WINS;
+                case PLAYER_2 -> Status.PLAYER_1_WINS;
+            };
+        }
+
+        return Status.IN_PROGRESS;
     }
 
     /**
@@ -218,101 +294,17 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     }
 
     /**
-     * Returns the {@link Status} of the current board game.
-     * @return {@link Status#IN_PROGRESS} if the game is still in progress,
-     * {@link Status#PLAYER_1_WINS} if Player1 has won,
-     * and {@link Status#PLAYER_2_WINS} if Player2 has won
+     * Resets the board game to the starting position.
      */
-    @Override
-    public Status getStatus() {
-        if (isGameOver()) {
-            return switch (nextPlayer.get()) {
-                case PLAYER_1 -> Status.PLAYER_2_WINS;
-                case PLAYER_2 -> Status.PLAYER_1_WINS;
-            };
-        }
-
-        return Status.IN_PROGRESS;
-    }
-
-    /**
-     * Determines if the specified position counts as a legal move.
-     * A move is legal if the position contains {@link Piece#NONE},
-     * {@link Piece#RED} or {@link Piece#YELLOW}.
-     * @param move a {@link Position} of a move to be analyzed
-     * @return {@code true} if the {@link Position} counts as a legal move,
-     * otherwise {@code false}
-     */
-    @Override
-    public boolean isLegalMove(final Position move) {
-        if (!isOnTheBoard(move) || isGameOver()) {
-            return false;
-        }
-
-        return switch (gameBoard[move.row()][move.col()].get()) {
-            case NONE, YELLOW, RED -> true;
-            case GREEN -> false;
-        };
-    }
-
-    /**
-     * Determines if a specified position is on the game board.
-     * @param move the {@link Position} to be analyzed
-     * @return {@code true} if the position is on the board,
-     * otherwise {@code false}
-     */
-    private boolean isOnTheBoard(final Position move) {
-        return move.row() >= 0 && move.col() >= 0
-                && move.row() < BOARD_SIZE && move.col() < BOARD_SIZE;
-    }
-
-    /**
-     * Makes a move with the {@link #nextPlayer} at the specified position.
-     * @param move the {@link Position} of the move to be played
-     * @throws IllegalArgumentException if an illegal move is played
-     */
-    @Override
-    public void makeMove(final Position move) {
-        if (!isLegalMove(move)) {
-            Logger.warn("An invalid move was made!");
-            throw new IllegalArgumentException();
-        }
-
-        Piece piece = getPiece(move.row(), move.col());
-        gameBoard[move.row()][move.col()].set(
-                piece.nextPiece()
-        );
-
-
-        nextPlayer.set(nextPlayer.get().opponent());
-        Logger.info("Made a move ({}, {}), which is now {}",
-                move.row(),
-                move.col(),
-                piece.nextPiece());
-
-        if (isGameOver()) {
-            Logger.info("{} has won the game!", nextPlayer.get().opponent());
-        }
-    }
-
-    /**
-     * Gathers all the legal moves in the current position.
-     * @return a {@link Set} of every legal move's position
-     */
-    @Override
-    public Set<Position> getLegalMoves() {
-        Set<Position> legalMoves = new HashSet<>();
-
+    public void resetGameBoard() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                Position move = new Position(i, j);
-                if (isLegalMove(move)) {
-                    legalMoves.add(move);
-                }
+                gameBoard[i][j].set(Piece.NONE);
             }
         }
-        Logger.info("List of all legal moves: {}",  legalMoves);
-        return legalMoves;
+
+        nextPlayer.set(Player.PLAYER_1);
+        Logger.info("Game Board reset");
     }
 
     /**
