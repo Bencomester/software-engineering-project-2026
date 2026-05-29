@@ -14,6 +14,7 @@ import java.util.Set;
  * The model handles different states, moving logics and win conditions.
  * The class implements the {@link State} interface
  * taken from homework-project-utils-2026.
+ *
  * @author Bencomester
  */
 public class BoardGameModel implements State<Position, BoardGameModel> {
@@ -72,6 +73,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Returns the next {@link Player} wrapped in a read-only property.
+     *
      * @return read-only property containing the next player
      */
     public ReadOnlyObjectProperty<Player> getNextPlayerProperty() {
@@ -80,6 +82,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Returns the {@link Player} who has the next turn.
+     *
      * @return the Player who has the next turn
      */
     @Override
@@ -104,6 +107,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Determines if a specified position is on the game board.
+     *
      * @param move the {@link Position} to be analyzed
      * @return {@code true} if the position is on the board,
      * otherwise {@code false}
@@ -115,6 +119,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Makes a move with the {@link #nextPlayer} at the specified position.
+     *
      * @param move the {@link Position} of the move to be played
      * @throws IllegalArgumentException if an illegal move is played
      */
@@ -144,6 +149,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Gathers all the legal moves in the current position.
+     *
      * @return a {@link Set} of every legal move's position
      */
     @Override
@@ -166,6 +172,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      * Determines if the specified position counts as a legal move.
      * A move is legal if the position contains {@link Piece#NONE},
      * {@link Piece#RED} or {@link Piece#YELLOW}.
+     *
      * @param move a {@link Position} of a move to be analyzed
      * @return {@code true} if the {@link Position} counts as a legal move,
      * otherwise {@code false}
@@ -186,6 +193,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Returns the {@link Status} of the current board game.
+     *
      * @return {@link Status#IN_PROGRESS} if the game is still in progress,
      * {@link Status#PLAYER_1_WINS} if Player1 has won,
      * and {@link Status#PLAYER_2_WINS} if Player2 has won
@@ -205,7 +213,8 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     /**
      * Checks if the game is over.
      * The game is over when there is three of the same color
-     * in either row column or diagonal
+     * in either row column or diagonal.
+     *
      * @return {@code true} if the game has ended,
      * {@code false} if it's still ongoing
      */
@@ -219,6 +228,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Check if there is a row with the same three colors.
+     *
      * @return {@code true} if a colored row is found
      */
     @SuppressWarnings("DuplicatedCode")
@@ -247,6 +257,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Checks if there is a column with the same three colors.
+     *
      * @return {@code true} if a colored column is found
      */
     @SuppressWarnings("DuplicatedCode")
@@ -275,6 +286,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Checks if the primary diagonal has the same three colors.
+     *
      * @return {@code true} if the diagonal has the same colors
      */
     private boolean checkDiagonalFromTopLeft() {
@@ -293,6 +305,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Checks if the secondary diagonal has the same three colors.
+     *
      * @return {@code true} if the diagonal has the same colors
      */
     private boolean checkDiagonalFromBottomLeft() {
@@ -326,6 +339,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     /**
      * Helper function for saving the game state,
      * which unpacks pieces from their wrappers.
+     *
      * @return a {@link Piece} array of arrays that represent the game board
      */
     public Piece[][] getBoardData() {
@@ -341,6 +355,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     /**
      * Helper function for loading a game state,
      * which wraps the pieces and the next player.
+     *
      * @param boardData a {@link Piece} array of arrays
      *                  that represent the game board
      * @param player the {@link Player} on the current turn
@@ -356,6 +371,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Creates a deep copy of this model.
+     *
      * @return the new copy of this model
      */
     @SuppressWarnings("unchecked")
@@ -376,6 +392,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
     /**
      * Creates a string from the current state of the game board.
+     *
      * @return a string representing the game board
      */
     @Override
