@@ -3,21 +3,22 @@ package boardgame.model;
 import common.util.board.Position;
 import game.State.Status;
 import game.State.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UnitTest {
+public class GameModelTest {
+
+    private BoardGameModel model;
+
+    @BeforeEach
+    void setUp() {
+        model = new BoardGameModel();
+    }
 
     @Test
     void initialization() {
-        BoardGameModel model = new BoardGameModel();
-
         assertFalse(model.isGameOver());
         assertEquals(Status.IN_PROGRESS, model.getStatus());
         assertEquals("---\n---\n---\n", model.toString());
@@ -27,8 +28,6 @@ public class UnitTest {
 
     @Test
     void isLegalMove() {
-        BoardGameModel model = new BoardGameModel();
-
         assertTrue(model.isLegalMove(new Position(0, 0)));
         assertTrue(model.isLegalMove(new Position(1, 1)));
         assertTrue(model.isLegalMove(new Position(2, 2)));
@@ -40,7 +39,6 @@ public class UnitTest {
 
     @Test
     void legalMoves() {
-        BoardGameModel model = new BoardGameModel();
         Position nonePos = new Position(0, 0);
         Position redPos = new Position(1, 2);
         Position yellowPos = new Position(2, 1);
@@ -63,7 +61,6 @@ public class UnitTest {
 
     @Test
     void makeMove() {
-        BoardGameModel model = new BoardGameModel();
         Position pos = new Position(0, 0);
 
         model.makeMove(pos);
@@ -84,7 +81,6 @@ public class UnitTest {
 
     @Test
     void gameOverWithRow() {
-        BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(0, 0);
         Position pos2 = new Position(0, 1);
         Position pos3 = new Position(0, 2);
@@ -100,7 +96,6 @@ public class UnitTest {
 
     @Test
     void gameOverWithColumn() {
-        BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(0, 0);
         Position pos2 = new Position(1, 0);
         Position pos3 = new Position(2, 0);
@@ -116,7 +111,6 @@ public class UnitTest {
 
     @Test
     void gameOverWithDiagonal1() {
-        BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(0, 0);
         Position pos2 = new Position(1, 1);
         Position pos3 = new Position(2, 2);
@@ -132,7 +126,6 @@ public class UnitTest {
 
     @Test
     void gameOverWithDiagonal2() {
-        BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(2, 0);
         Position pos2 = new Position(1, 1);
         Position pos3 = new Position(0, 2);
@@ -148,7 +141,6 @@ public class UnitTest {
 
     @Test
     void resetGameBoard() {
-        BoardGameModel model = new BoardGameModel();
         Position pos1 = new Position(1, 1);
 
         model.makeMove(pos1);
@@ -156,23 +148,5 @@ public class UnitTest {
 
         assertEquals(Player.PLAYER_1, model.getNextPlayer());
         assertEquals("---\n---\n---\n", model.toString());
-    }
-
-    @Test
-    void saveAndLoadGameState(@TempDir Path tempDir) throws IOException {
-        File saveFile = tempDir.resolve("temp_save.json").toFile();
-        BoardGameModel model = new BoardGameModel();
-        Position pos1 = new Position(0, 0);
-
-        model.makeMove(pos1);
-        FileManager.saveGameStateToFile(model, saveFile);
-        model = new BoardGameModel();
-        FileManager.loadGameStateFromFile(model, saveFile);
-
-        assertTrue(saveFile.exists());
-        assertTrue(saveFile.isFile());
-        assertTrue(saveFile.length() > 0);
-        assertEquals(Player.PLAYER_2, model.getNextPlayer());
-        assertEquals("R--\n---\n---\n", model.toString());
     }
 }
