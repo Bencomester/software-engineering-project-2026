@@ -25,6 +25,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
     private static final int BOARD_SIZE = 3;
 
     /**
+     * Holds all possible positions of the board as a flyweight.
+     */
+    private static final Position[][] POSITIONS;
+
+    /**
      * The board as an array of arrays,
      * where each {@link Piece} is wrapped in a read-only wrapper.
      */
@@ -36,6 +41,14 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     private ReadOnlyObjectWrapper<Player> nextPlayer;
 
+    static {
+        POSITIONS = new Position[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                POSITIONS[i][j] = new Position(i, j);
+            }
+        }
+    }
 
     /**
      * Creates a square game board of size {@link #BOARD_SIZE}
@@ -53,6 +66,9 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
         Logger.info("Created a new BoardGameModel");
     }
 
+    private Position getPosition(final int row, final int col) {
+        return POSITIONS[row][col];
+    }
 
     /**
      * Returns the next {@link Player} wrapped in a read-only property.
@@ -80,7 +96,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     public ReadOnlyObjectProperty<Piece> getPieceProperty(final int row,
                                                           final int col) {
-        if (isOnTheBoard(new Position(row, col))) {
+        if (isOnTheBoard(getPosition(row, col))) {
             return gameBoard[row][col].getReadOnlyProperty();
         }
         return new ReadOnlyObjectWrapper<>(Piece.NONE);
@@ -136,7 +152,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                Position move = new Position(i, j);
+                Position move = getPosition(i, j);
                 if (isLegalMove(move)) {
                     legalMoves.add(move);
                 }
