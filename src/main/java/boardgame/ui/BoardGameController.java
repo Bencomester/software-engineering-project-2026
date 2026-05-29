@@ -94,6 +94,7 @@ public class BoardGameController {
 
     /**
      * Sets name of the second player to the specified string.
+     *
      * @param player2 the specified string for the name
      */
     public void setPlayer2Name(final String player2) {
@@ -124,6 +125,7 @@ public class BoardGameController {
     /**
      * Creates a {@link StackPane} at the specified position
      * which serves as a game piece.
+     *
      * @param pos the {@link Position} which will identify the piece type
      * @return the newly created stack pane
      */
@@ -138,6 +140,7 @@ public class BoardGameController {
 
     /**
      * Creates an image view for a stack pane, with the appropriate image.
+     *
      * @param pos the {@link Position} which will identify
      *            the piece type and thus the image
      * @return the newly created image view
@@ -180,6 +183,7 @@ public class BoardGameController {
     /**
      * Creates the string for the displayed label
      * based on the current state of the game.
+     *
      * @return the formatted string
      */
     private String getFormattedLabelText() {
@@ -196,6 +200,7 @@ public class BoardGameController {
 
     /**
      * Returns the name of the player on the current turn.
+     *
      * @return the name of the player
      */
     private String getNextPlayerName() {
@@ -207,6 +212,7 @@ public class BoardGameController {
 
     /**
      * Returns the opponent name of the current player on turn.
+     *
      * @return the name of the player
      */
     private String getNextPlayerOpponentName() {
@@ -218,6 +224,7 @@ public class BoardGameController {
 
     /**
      * Called when a piece (stack pane) is clicked on the UI.
+     *
      * @param event contains information about the mouse click
      */
     @FXML
@@ -315,6 +322,7 @@ public class BoardGameController {
 
     /**
      * Called when the user clicks the Main Menu option.
+     *
      * @throws IOException if an IO error occurs while reading fxml
      */
     @FXML
@@ -391,6 +399,7 @@ public class BoardGameController {
     /**
      * Creates an error type alert pop-up
      * with a custom and an exception message.
+     *
      * @param message the custom message shown as a header text
      * @param e the event which message is shown as content text
      */

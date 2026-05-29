@@ -118,6 +118,7 @@ public class StartScreenController {
      * Names are changed to "Player 1" and "Player 2" by default if they are
      * empty. If both names are the same, "2" is appended at the end of the
      * second player's name.
+     *
      * @param controller the specified controller instance
      */
     private void setPlayerNames(final BoardGameController controller) {
