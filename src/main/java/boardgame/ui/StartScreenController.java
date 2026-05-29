@@ -13,6 +13,7 @@ import jfxutils.JFXUtils;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +28,12 @@ public class StartScreenController {
      * Specifies how many of the previous game results are displayed.
      */
     private static final int NUM_RESULTS = 3;
+
+    /**
+     * The date display format of the results shown.
+     */
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
     /**
      * Text Box for entering the name of the first player.
@@ -76,7 +83,7 @@ public class StartScreenController {
                         result.player1(),
                         result.player2(),
                         result.winner(),
-                        result.date()
+                        result.date().format(DATE_TIME_FORMATTER)
                 );
 
                 resultsBox.getChildren().add(new Label(text));

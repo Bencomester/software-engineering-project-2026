@@ -2,6 +2,8 @@ package boardgame.model;
 
 import boardgame.ui.BoardGameController;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.tinylog.Logger;
 
 import java.io.File;
@@ -21,6 +23,13 @@ public final class FileManager {
             Paths.get(System.getProperty("user.home"))
                     .resolve(".ttt_bb_results.json").toFile();
 
+    /**
+     * Object mapper with java time module and without timestamp serialization.
+     */
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
     private FileManager() { }
 
     /**
@@ -32,8 +41,8 @@ public final class FileManager {
         ArrayList<GameResult> gameResults = loadAndGetResults();
         gameResults.add(result);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter()
+        OBJECT_MAPPER
+                .writerWithDefaultPrettyPrinter()
                 .writeValue(RESULTS_FILE, gameResults);
         Logger.info("Saved new game result to: {}",
                 RESULTS_FILE.getAbsolutePath());
@@ -53,17 +62,14 @@ public final class FileManager {
         Logger.info("Loading game results from: {}",
                 RESULTS_FILE.getAbsolutePath());
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(
+        return OBJECT_MAPPER.readValue(
                 RESULTS_FILE,
-                mapper.getTypeFactory()
+                OBJECT_MAPPER.getTypeFactory()
                         .constructCollectionType(
                                 ArrayList.class,
                                 GameResult.class
                         )
         );
-
-
     }
 
     /**

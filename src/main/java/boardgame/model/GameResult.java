@@ -1,5 +1,7 @@
 package boardgame.model;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents the result of a finished game.
  * @param player1 the name of the first player
@@ -11,4 +13,4 @@ public record GameResult(
         String player1,
         String player2,
         String winner,
-        String date) { }
+        LocalDateTime date) { }
