@@ -233,8 +233,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     @SuppressWarnings("DuplicatedCode")
     private boolean checkRows() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            boolean areRowPiecesSame = true;
+        outer: for (int i = 0; i < BOARD_SIZE; i++) {
             Piece piece = gameBoard[i][0].get();
             if (piece == Piece.NONE) {
                 continue;
@@ -242,14 +241,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
             for (int j = 1; j < BOARD_SIZE; j++) {
                 if (piece != gameBoard[i][j].get()) {
-                    areRowPiecesSame = false;
-                    break;
+                    continue outer;
                 }
             }
 
-            if (areRowPiecesSame) {
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -262,8 +258,7 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
      */
     @SuppressWarnings("DuplicatedCode")
     private boolean checkColumns() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            boolean areRowPiecesSame = true;
+        outer: for (int i = 0; i < BOARD_SIZE; i++) {
             Piece piece = gameBoard[0][i].get();
             if (piece == Piece.NONE) {
                 continue;
@@ -271,14 +266,11 @@ public class BoardGameModel implements State<Position, BoardGameModel> {
 
             for (int j = 1; j < BOARD_SIZE; j++) {
                 if (piece != gameBoard[j][i].get()) {
-                    areRowPiecesSame = false;
-                    break;
+                    break outer;
                 }
             }
 
-            if (areRowPiecesSame) {
-                return true;
-            }
+            return true;
         }
 
         return false;
